@@ -53,6 +53,9 @@ Usage of ./google_auth_proxy:
   -cookie-secret="": the seed string for secure cookies
   -google-apps-domain="": authenticate against the given google apps domain
   -htpasswd-file="": additionally authenticate against a htpasswd file. Entries must be created with "htpasswd -s" for SHA encryption
+  -redmine-url="": alternatively authenticate against a Redmine user group.  Base Redmine URL.
+  -redmine-group=-1: Redmine group ID to authenticate against.  User must be a member of this group.  -1 is any group.
+  -redmine-key="": Redmine API key
   -http-address="127.0.0.1:4180": <addr>:<port> to listen on for HTTP clients
   -pass-basic-auth=true: pass HTTP Basic Auth information to upstream
   -redirect-url="": the OAuth Redirect URL. ie: "https://internalapp.yourcompany.com/oauth2/callback"

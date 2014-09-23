@@ -24,6 +24,9 @@ var (
 	cookieSecret            = flag.String("cookie-secret", "", "the seed string for secure cookies")
 	cookieDomain            = flag.String("cookie-domain", "", "an optional cookie domain to force cookies to")
 	authenticatedEmailsFile = flag.String("authenticated-emails-file", "", "authenticate against emails via file (one per line)")
+	redmineURL              = flag.String("redmine-url", "", "alternatively authenticate against a Redmine user group.  Base Redmine URL.")
+	redmineGroup            = flag.Int("redmine-group", -1, "Redmine group ID to authenticate against.  User must be a member of this group.  -1 is any group.")
+	redmineKey              = flag.String("redmine-key", "", "Redmine API key")
 	googleAppsDomains       = StringArray{}
 	upstreams               = StringArray{}
 )
@@ -79,7 +82,14 @@ func main() {
 		log.Fatalf("error parsing --redirect-url %s", err.Error())
 	}
 
-	validator := NewValidator(googleAppsDomains, *authenticatedEmailsFile)
+	var validator func(string) bool
+	if *redmineURL != "" && *redmineKey != "" {
+		log.Println("Validating through Redmine")
+		validator = NewRedmineValidator(*redmineURL, *redmineKey, *redmineGroup)
+	} else {
+		validator = NewValidator(googleAppsDomains, *authenticatedEmailsFile)
+	}
+
 	oauthproxy := NewOauthProxy(upstreamUrls, *clientID, *clientSecret, validator)
 	oauthproxy.SetRedirectUrl(redirectUrl)
 	if len(googleAppsDomains) != 0 && *authenticatedEmailsFile == "" {
