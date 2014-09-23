@@ -349,7 +349,8 @@ func (p *OauthProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 
 	if !ok {
 		log.Printf("invalid cookie")
-		p.SignInPage(rw, req, 403)
+		// Automatically redirect to login
+		http.Redirect(rw, req, p.GetLoginURL(req.URL.Path), 302)
 		return
 	}
 
